@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>code-with-quarkus - 1.0.0-SNAPSHOT</title>
+    <style>
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 2rem
+        }
+
+        h3 {
+            font-size: 1.75rem
+        }
+
+        h4 {
+            font-size: 1.5rem
+        }
+
+        h5 {
+            font-size: 1.25rem
+        }
+
+        h6 {
+            font-size: 1rem
+        }
+
+        .lead {
+            font-weight: 300;
+            font-size: 2rem;
+        }
+
+        .banner {
+            font-size: 2.7rem;
+            margin: 0;
+            padding: 2rem 1rem;
+            background-color: #00A1E2;
+            color: white;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        code {
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 87.5%;
+            color: #e83e8c;
+            word-break: break-word;
+        }
+
+        .left-column {
+            padding: .75rem;
+            max-width: 75%;
+            min-width: 55%;
+        }
+
+        .right-column {
+            padding: .75rem;
+            max-width: 25%;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        li {
+            margin: 0.75rem;
+        }
+
+        .right-section {
+            margin-left: 1rem;
+            padding-left: 0.5rem;
+        }
+
+        .right-section h3 {
+            padding-top: 0;
+            font-weight: 200;
+        }
+
+        .right-section ul {
+            border-left: 0.3rem solid #00A1E2;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+
+    <table class="blueTable">
+        <thead >
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Delete</th>
+            <th>Update</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="user in users" :key="user.id">
+            <td>{{user.id}}</td>
+            <td>{{user.name}}</td>
+            <td>{{user.surname}}</td>
+            <td>  <button class="button"  @click="deleteUser(user.id)">Delete</button></td>
+            <td>  <button class="button"  @click="updateUser(user.id)">Update</button></td>
+        </tr>
+        </tbody>
+    </table>
+    <br/>
+    <div>
+        <form name="form" >
+            <input type="text" placeholder="Name" v-model="name" size="60"/><br/>
+            <input type="text" placeholder="Surname" v-model="surname" size="60"/><br/>
+            <input type="submit" value="Save" @click="createUser"/><br/>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+<script>
+
+
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                users: []
+            }
+        },
+        methods: {
+
+
+            updateUser: function(id) {
+
+                axios.put("/customers?id="+id+"&name="+this.name+"&surname="+this.surname)
+                    .then(response => {
+                        this.listUsers()
+                    })
+                this.name='';
+                this.surname='';
+            },
+
+            deleteUser: function(id) {
+
+                axios.delete("/customers?id="+id)
+                    .then(response => {
+                        this.listUsers()
+                    })
+            },
+
+            createUser: function() {
+
+                var user = {
+                    // name and surname should exist in [data] or [computed] section
+                    name: this.name,
+                    surname: this.surname
+                };
+
+
+                axios.post("/customers",  user)
+                    .then(response => {
+                        this.listUsers()
+                    })
+
+
+            },
+            listUsers: function() {
+                axios.get("/customers")
+                    .then(response => {
+                        this.users = response.data
+                    })
+            }
+        },
+        mounted: function() {
+
+            this.listUsers()
+        }
+
+
+    })
+</script>
+
+
+</body>
+</html>
