@@ -5,6 +5,7 @@ import javax.persistence.*;
 @Entity
 @NamedQuery(name = "Customers.findAll", query = "SELECT c FROM Customer c ORDER BY c.id")
 public class Customer {
+
   @Id
   @SequenceGenerator(
     name = "customerSequence",
